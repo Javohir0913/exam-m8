@@ -6,12 +6,18 @@ from rest_framework import serializers
 UserModel = get_user_model()
 
 
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True)
+    confirm_password = serializers.CharField(required=True, write_only=True)
+
+
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
-    new_password = serializers.CharField(style={'input_type': 'password'})
+    new_password = serializers.CharField(required=True, write_only=True)
     code = serializers.CharField(max_length=8)
 
 

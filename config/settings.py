@@ -25,8 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-# SECRET_KEY = 'django-insecure-_=w5a0nedb6npx!hcr_gt62h+39_d2gtsj_cq3b1687rx(4r%i'
+# SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = 'django-insecure-_=w5a0nedb6npx!hcr_gt62h+39_d2gtsj_cq3b1687rx(4r%i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -46,10 +46,13 @@ INSTALLED_APPS = [
     # Third party packages
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'drf_yasg',
-
+    'ckeditor',
     # my apps
     'users',
+    'app_article',
+    'app_page',
 ]
 
 MIDDLEWARE = [
@@ -133,14 +136,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 STATIC_URL = 'static/'
 
-if DEBUG is False:
+# if DEBUG is False:
     # STATIC_ROOT = '/home/my_domain/domain_dir/static/'
-    STATIC_ROOT = 'static'
-else:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-        BASE_DIR / 'media'
-    ]
+STATIC_ROOT = BASE_DIR / 'static'
+# else:
+STATICFILES_DIRS = [
+    # BASE_DIR / "static",
+    BASE_DIR / 'media'
+]
 
 
 # Default primary key field type
@@ -166,9 +169,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_FILTER_BACKENDS': (
-    #     'django_filters.rest_framework.DjangoFilterBackend',
-    # ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 # ----------SIMPLE_JWT----------------

@@ -4,15 +4,22 @@ from random import randint
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from config import settings
 from .models import PasswordResets
 from .permissions import IsOwnerOrSuperUser
-from .serializers import UserSerializer, ProfileSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
+from .serializers import (
+    UserSerializer,
+    ProfileSerializer,
+    PasswordResetSerializer,
+    PasswordResetConfirmSerializer,
+    PasswordChangeSerializer
+)
 
 
 class RegisterAPIView(CreateAPIView):
@@ -38,10 +45,16 @@ class ProfileUpdateView(ModelViewSet):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def password_change_view(request):
     try:
-        old_password = request.data['old_password']
-        new_password = request.data['new_password']
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            old_password = request.data['old_password']
+            new_password = request.data['new_password']
+            confirm_password = request.data['confirm_password']
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except KeyError:
         return Response(
             data={'message': 'Old password or new password is missing'},
@@ -49,6 +62,8 @@ def password_change_view(request):
         )
     user = request.user
     if user.check_password(old_password):
+        if new_password != confirm_password:
+            return Response({'message': 'Confirm Password do not match'}, status=status.HTTP_400_BAD_REQUEST)
         user.set_password(new_password)
         user.save()
         return Response(

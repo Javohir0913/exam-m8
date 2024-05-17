@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='users_photo/', blank=True, null=True)
 
     def __str__(self):
-        return self.username
+        return str(self.username)
 
     class Meta:
         db_table = 'users'
