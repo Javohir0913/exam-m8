@@ -30,6 +30,7 @@ class JournalViewSet(ModelViewSet):
         return JournalDetailSerializer
 
     def perform_create(self, serializer):
+        print(self.request.user)
         serializer.save(jornal_author=self.request.user)
         return serializer.save()
 
