@@ -3,8 +3,8 @@ from .models import Category, Review, Article, Keywords
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_filter = ('art_title', 'author')
-    search_fields = ('art_title', 'author')
+    list_filter = ('art_title_uz', 'author')
+    search_fields = ('art_title_uz', 'author')
     list_per_page = 10
 
 

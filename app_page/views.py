@@ -1,10 +1,14 @@
 from django.core.mail import send_mail
+from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
+from app_article.models import Article
+from app_article.serializers import ArticleOrderBySerializer
 from config.settings import EMAIL_HOST_USER
 from users.permissions import IsSuperUser, IsPostOrGet
 from .models import FAQ, Requirements, Contacts, Appeal
 from .serializers import FAQSerializer, RequirementsSerializer, ContactsSerializer, AppealSerializer
+from rest_framework.generics import ListAPIView
 
 
 # Create your views here.
@@ -55,3 +59,14 @@ class SendEmailMessageViewSet(ModelViewSet):
             recipient_list=[EMAIL_HOST_USER],
         )
         return super().create(request, *args, **kwargs)
+
+
+class PageHome(ListAPIView):
+    permission_classes = [IsSuperUser]
+    serializer_class = ArticleOrderBySerializer
+
+    def get_queryset(self):
+        views = Article.objects.order_by('-art_views')[:10]
+        time = Article.objects.order_by('-art_datetime')[:10]
+
+        return views | time
